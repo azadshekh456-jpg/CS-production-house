@@ -1,0 +1,777 @@
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>C S Production House | Cinematic AI & 3D Studio</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        obsidian: '#080b12',
+                        crimson: '#ff3b3b',
+                        cyber: '#3b82f6',
+                    },
+                    fontFamily: {
+                        sans: ['"Space Grotesk"', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            background-color: #080b12;
+            background-image: 
+                linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+            background-size: 50px 50px;
+            color: white;
+            font-family: 'Space Grotesk', sans-serif;
+            overflow-x: hidden;
+            cursor: none;
+        }
+        
+        @media (max-width: 768px) {
+            body { cursor: auto !important; }
+            .custom-cursor, .cursor-ring { display: none !important; }
+        }
+        
+        .glass {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .grain {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0.04;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+        
+        .text-gradient {
+            background: linear-gradient(90deg, #ff3b3b, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        /* Custom Cursor */
+        .custom-cursor {
+            position: fixed;
+            top: 0; left: 0;
+            width: 8px; height: 8px;
+            background: #ff3b3b;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 10000;
+            transition: width 0.3s, height 0.3s, background 0.3s;
+        }
+        
+        .cursor-ring {
+            position: fixed;
+            top: 0; left: 0;
+            width: 40px; height: 40px;
+            border: 1px solid rgba(59, 130, 246, 0.5);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            transition: width 0.3s, height 0.3s, background 0.3s, border-color 0.3s;
+        }
+        
+        .cursor-hover .custom-cursor {
+            width: 12px; height: 12px;
+            background: #3b82f6;
+        }
+        
+        .cursor-hover .cursor-ring {
+            width: 60px; height: 60px;
+            border-color: #ff3b3b;
+            background: rgba(255, 59, 59, 0.05);
+        }
+        
+        /* Animations */
+        @keyframes pulse-red {
+            0% { box-shadow: 0 0 0 0 rgba(255, 59, 59, 0.7); }
+            70% { box-shadow: 0 0 0 8px rgba(255, 59, 59, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 59, 59, 0); }
+        }
+        
+        .pulse-dot {
+            width: 8px; height: 8px;
+            background: #ff3b3b;
+            border-radius: 50%;
+            animation: pulse-red 2s infinite;
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+            100% { transform: translateY(0px); }
+        }
+        
+        .float-anim {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        @keyframes bounce-hover {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-10px) scale(1.1); }
+        }
+        
+        .hover-bounce:hover {
+            animation: bounce-hover 1s infinite;
+        }
+        
+        /* FAQ Accordion */
+        .faq-btn.active i {
+            transform: rotate(45deg);
+        }
+        
+        .faq-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out, padding 0.3s ease;
+        }
+        
+        .faq-content.open {
+            max-height: 200px;
+            padding-bottom: 1.25rem;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-crimson selection:text-white">
+
+    <!-- Film Grain Overlay -->
+    <div class="grain"></div>
+
+    <!-- Custom Cursor -->
+    <div class="custom-cursor"></div>
+    <div class="cursor-ring"></div>
+
+    <!-- Scroll Progress Bar -->
+    <div id="progress-bar" class="fixed top-0 left-0 h-1 bg-gradient-to-r from-crimson to-cyber z-[10001] w-0"></div>
+
+    <!-- Navigation -->
+    <nav id="navbar" class="fixed w-full z-50 transition-all duration-300 glass border-b border-white/5">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="#" class="text-2xl font-bold tracking-tighter flex items-center gap-2 cursor-hover">
+                <span class="text-crimson">C</span><span class="text-cyber">S</span> Production
+            </a>
+            <div class="hidden md:flex gap-8 items-center">
+                <a href="#services" class="hover:text-crimson transition-colors cursor-hover">Services</a>
+                <a href="#portfolio" class="hover:text-crimson transition-colors cursor-hover">Portfolio</a>
+                <a href="#pricing" class="hover:text-crimson transition-colors cursor-hover">Pricing</a>
+                <a href="#faq" class="hover:text-crimson transition-colors cursor-hover">FAQ</a>
+                <a href="#contact" class="px-6 py-2 bg-white/5 hover:bg-crimson/20 border border-white/10 hover:border-crimson rounded-full transition-all cursor-hover">Get a Quote</a>
+            </div>
+            <button id="menu-btn" class="md:hidden text-2xl cursor-hover text-white">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="fixed inset-0 z-40 bg-obsidian/95 backdrop-blur-xl flex flex-col items-center justify-center gap-8 text-2xl hidden transform translate-x-full transition-transform duration-500">
+        <a href="#services" class="mobile-link hover:text-crimson cursor-hover">Services</a>
+        <a href="#portfolio" class="mobile-link hover:text-crimson cursor-hover">Portfolio</a>
+        <a href="#pricing" class="mobile-link hover:text-crimson cursor-hover">Pricing</a>
+        <a href="#faq" class="mobile-link hover:text-crimson cursor-hover">FAQ</a>
+        <a href="#contact" class="mobile-link px-8 py-3 bg-crimson rounded-full cursor-hover mt-4 shadow-[0_0_20px_rgba(255,59,59,0.3)]">Get a Quote</a>
+    </div>
+
+    <!-- Hero Section -->
+    <header class="relative min-h-screen flex items-center pt-20 overflow-hidden">
+        <!-- Parallax Giant Text -->
+        <div class="absolute inset-0 flex items-center justify-center pointer-events-none select-none overflow-hidden">
+            <h2 id="parallax-text" class="text-[25vw] font-bold text-transparent whitespace-nowrap tracking-tighter" style="-webkit-text-stroke: 2px rgba(255,255,255,0.05);">CREATIVE</h2>
+        </div>
+        
+        <div class="max-w-7xl mx-auto px-6 w-full grid lg:grid-cols-2 gap-12 items-center relative z-10">
+            <div class="space-y-8">
+                <div class="inline-flex items-center gap-3 px-4 py-2 rounded-full glass border border-crimson/30">
+                    <div class="pulse-dot"></div>
+                    <span class="text-xs md:text-sm font-medium tracking-widest uppercase text-gray-300">Creative + AI Media Studio</span>
+                </div>
+                
+                <h1 class="text-5xl md:text-7xl font-bold leading-[1.1] tracking-tight">
+                    Creative Media, <br>
+                    <span class="text-gradient">AI Video</span> & <br>
+                    3D Animation Studio
+                </h1>
+                
+                <p class="text-lg text-gray-400 max-w-md">
+                    Based in Varanasi, India. We craft cinematic experiences, AI-driven videos, and hyper-realistic 3D animations for global brands.
+                </p>
+                
+                <div class="flex flex-wrap gap-4">
+                    <a href="#portfolio" class="px-8 py-4 bg-crimson hover:bg-crimson/80 rounded-full font-semibold transition-all shadow-[0_0_20px_rgba(255,59,59,0.3)] cursor-hover">
+                        View Our Work
+                    </a>
+                    <a href="#contact" class="px-8 py-4 glass hover:border-cyber/50 rounded-full font-semibold transition-all cursor-hover">
+                        Start a Project
+                    </a>
+                </div>
+            </div>
+            
+            <div class="relative hidden lg:block">
+                <!-- Floating Glass Card -->
+                <div class="glass p-8 rounded-3xl border border-white/10 shadow-2xl relative float-anim">
+                    <div class="absolute -top-4 -right-4 w-24 h-24 bg-cyber/20 blur-3xl rounded-full"></div>
+                    <h3 class="text-xl font-bold mb-6 border-b border-white/10 pb-4">Agency Credentials</h3>
+                    <ul class="space-y-6">
+                        <li class="flex items-center gap-4">
+                            <div class="w-10 h-10 rounded-full bg-crimson/20 flex items-center justify-center text-crimson">
+                                <i class="fas fa-certificate"></i>
+                            </div>
+                            <div>
+                                <p class="font-semibold">MSME Registered</p>
+                                <p class="text-xs text-gray-400">Udyam Certified Entity</p>
+                            </div>
+                        </li>
+                        <li class="flex items-center gap-4">
+                            <div class="w-10 h-10 rounded-full bg-cyber/20 flex items-center justify-center text-cyber">
+                                <i class="fas fa-landmark"></i>
+                            </div>
+                            <div>
+                                <p class="font-semibold">Government Project Ready</p>
+                                <p class="text-xs text-gray-400">PAN & GST Verified</p>
+                            </div>
+                        </li>
+                        <li class="flex items-center gap-4">
+                            <div class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-white">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <div>
+                                <p class="font-semibold">50+ Global Projects</p>
+                                <p class="text-xs text-gray-400">High Client Retention</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Scroll indicator -->
+        <div class="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-50">
+            <span class="text-xs uppercase tracking-widest">Scroll</span>
+            <div class="w-px h-12 bg-gradient-to-b from-white to-transparent"></div>
+        </div>
+    </header>
+
+    <!-- Interactive 3D & AI Showcase -->
+    <section class="py-24 relative z-10 max-w-7xl mx-auto px-6">
+        <div class="text-center mb-16">
+            <h2 class="text-4xl md:text-5xl font-bold mb-4">Next-Gen <span class="text-cyber">Showcase</span></h2>
+            <p class="text-gray-400">Hover over our interactive demos to feel the future of media.</p>
+        </div>
+        
+        <div class="grid md:grid-cols-2 gap-8">
+            <!-- 3D Mascot Card -->
+            <div class="group relative rounded-3xl overflow-hidden glass border border-white/10 hover:border-cyber/50 transition-all duration-500 cursor-hover h-80 flex items-end p-8">
+                <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1000&auto=format&fit=crop')] bg-cover bg-center opacity-40 group-hover:scale-110 transition-transform duration-700"></div>
+                <div class="absolute inset-0 bg-gradient-to-t from-obsidian via-obsidian/20 to-transparent"></div>
+                
+                <div class="relative z-10 w-full flex justify-between items-end">
+                    <div>
+                        <span class="inline-block px-3 py-1 bg-cyber/20 text-cyber rounded-full text-xs font-bold mb-3 border border-cyber/30">LIVE 3D</span>
+                        <h3 class="text-2xl font-bold">Mascot Animation</h3>
+                        <p class="text-sm text-gray-300 mt-2">Real-time rendered 3D characters.</p>
+                    </div>
+                    <div class="w-12 h-12 rounded-full bg-white/10 backdrop-blur flex items-center justify-center group-hover:bg-cyber group-hover:text-obsidian transition-colors">
+                        <i class="fas fa-arrow-right"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- AI Video Card -->
+            <div class="group relative rounded-3xl overflow-hidden glass border border-white/10 hover:border-crimson/50 transition-all duration-500 cursor-hover h-80 flex items-end p-8">
+                <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?q=80&w=1000&auto=format&fit=crop')] bg-cover bg-center opacity-40 group-hover:scale-110 transition-transform duration-700"></div>
+                <div class="absolute inset-0 bg-gradient-to-t from-obsidian via-obsidian/20 to-transparent"></div>
+                
+                <div class="relative z-10 w-full flex justify-between items-end">
+                    <div>
+                        <span class="inline-block px-3 py-1 bg-crimson/20 text-crimson rounded-full text-xs font-bold mb-3 border border-crimson/30">AI GEN</span>
+                        <h3 class="text-2xl font-bold">AI Video Synthesis</h3>
+                        <p class="text-sm text-gray-300 mt-2">Generative video models in production.</p>
+                    </div>
+                    <div class="w-12 h-12 rounded-full bg-white/10 backdrop-blur flex items-center justify-center group-hover:bg-crimson group-hover:text-obsidian transition-colors">
+                        <i class="fas fa-arrow-right"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Grid -->
+    <section id="services" class="py-24 relative z-10 max-w-7xl mx-auto px-6">
+        <h2 class="text-4xl md:text-5xl font-bold mb-12 text-center">Our <span class="text-gradient">Expertise</span></h2>
+        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div class="glass p-8 rounded-2xl hover:-translate-y-2 hover:shadow-[0_10px_30px_rgba(59,130,246,0.1)] transition-all duration-300 border border-transparent hover:border-cyber/30 cursor-hover group">
+                <div class="w-14 h-14 rounded-xl bg-white/5 flex items-center justify-center text-2xl text-cyber mb-6 group-hover:scale-110 transition-transform">
+                    <i class="fas fa-film"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-3">Documentary Films</h3>
+                <p class="text-sm text-gray-400">Cinematic storytelling with professional gear and editing.</p>
+            </div>
+            <div class="glass p-8 rounded-2xl hover:-translate-y-2 hover:shadow-[0_10px_30px_rgba(255,59,59,0.1)] transition-all duration-300 border border-transparent hover:border-crimson/30 cursor-hover group">
+                <div class="w-14 h-14 rounded-xl bg-white/5 flex items-center justify-center text-2xl text-crimson mb-6 group-hover:scale-110 transition-transform">
+                    <i class="fas fa-bullhorn"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-3">Awareness Campaigns</h3>
+                <p class="text-sm text-gray-400">High-impact social and gov. awareness video ads.</p>
+            </div>
+            <div class="glass p-8 rounded-2xl hover:-translate-y-2 hover:shadow-[0_10px_30px_rgba(59,130,246,0.1)] transition-all duration-300 border border-transparent hover:border-cyber/30 cursor-hover group">
+                <div class="w-14 h-14 rounded-xl bg-white/5 flex items-center justify-center text-2xl text-cyber mb-6 group-hover:scale-110 transition-transform">
+                    <i class="fas fa-cube"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-3">3D & Mascot</h3>
+                <p class="text-sm text-gray-400">Hyper-realistic 3D character animation and modeling.</p>
+            </div>
+            <div class="glass p-8 rounded-2xl hover:-translate-y-2 hover:shadow-[0_10px_30px_rgba(255,59,59,0.1)] transition-all duration-300 border border-transparent hover:border-crimson/30 cursor-hover group">
+                <div class="w-14 h-14 rounded-xl bg-white/5 flex items-center justify-center text-2xl text-crimson mb-6 group-hover:scale-110 transition-transform">
+                    <i class="fas fa-code"></i>
+                </div>
+                <h3 class="text-xl font-bold mb-3">Web Development</h3>
+                <p class="text-sm text-gray-400">Modern, fast, and interactive websites for agencies.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Digital & Creative Services Dynamic Grid -->
+    <section class="py-24 relative z-10 max-w-7xl mx-auto px-6">
+        <h2 class="text-3xl md:text-4xl font-bold mb-12">Digital & <span class="text-cyber">Creative</span> Workflow</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-[250px]">
+            <div class="md:col-span-2 md:row-span-2 glass rounded-3xl p-8 flex flex-col justify-end relative overflow-hidden group cursor-hover">
+                <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=1000&auto=format&fit=crop')] bg-cover opacity-20 group-hover:scale-105 transition-transform duration-700"></div>
+                <div class="absolute inset-0 bg-gradient-to-t from-obsidian via-obsidian/40 to-transparent"></div>
+                <div class="relative z-10 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
+                    <span class="inline-block px-3 py-1 bg-cyber/20 text-cyber rounded-full text-xs font-bold mb-3 border border-cyber/30">WORKFLOW</span>
+                    <h3 class="text-3xl font-bold mb-2">AI Post-Production</h3>
+                    <p class="text-gray-300 max-w-md">Upscaling, color grading, and VFX powered by neural networks for that cinematic finish.</p>
+                </div>
+            </div>
+            <div class="glass rounded-3xl p-6 flex flex-col justify-center items-center text-center border border-white/5 hover:border-crimson/50 transition-colors cursor-hover group">
+                <i class="fas fa-magic text-4xl text-crimson mb-4 group-hover:scale-110 transition-transform"></i>
+                <h4 class="font-bold text-lg">Motion Graphics</h4>
+                <p class="text-xs text-gray-400 mt-2">Kinetic typography & logo stings</p>
+            </div>
+            <div class="glass rounded-3xl p-6 flex flex-col justify-center items-center text-center border border-white/5 hover:border-cyber/50 transition-colors cursor-hover group">
+                <i class="fas fa-vr-cardboard text-4xl text-cyber mb-4 group-hover:scale-110 transition-transform"></i>
+                <h4 class="font-bold text-lg">AR / VR Ready</h4>
+                <p class="text-xs text-gray-400 mt-2">Immersive brand experiences</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Verified Trust Badges -->
+    <section class="py-12 border-y border-white/5 bg-white/[0.01] overflow-hidden">
+        <div class="max-w-7xl mx-auto px-6 flex flex-wrap justify-center gap-12 opacity-60 hover:opacity-100 transition-opacity duration-500">
+            <div class="flex items-center gap-3 cursor-hover"><i class="fas fa-award text-3xl text-cyber"></i> <span class="font-bold text-lg">MSME</span></div>
+            <div class="flex items-center gap-3 cursor-hover"><i class="fas fa-shield-alt text-3xl text-crimson"></i> <span class="font-bold text-lg">Udyam</span></div>
+            <div class="flex items-center gap-3 cursor-hover"><i class="fas fa-file-invoice text-3xl text-white"></i> <span class="font-bold text-lg">GST</span></div>
+            <div class="flex items-center gap-3 cursor-hover"><i class="fas fa-id-card text-3xl text-cyber"></i> <span class="font-bold text-lg">PAN</span></div>
+        </div>
+    </section>
+
+    <!-- Portfolio Grid -->
+    <section id="portfolio" class="py-24 relative z-10 max-w-7xl mx-auto px-6">
+        <div class="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
+            <h2 class="text-4xl md:text-5xl font-bold">Selected <span class="text-gradient">Works</span></h2>
+            <button class="px-6 py-2 glass rounded-full hover:bg-white/10 cursor-hover transition-colors">View All Projects</button>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="group relative rounded-2xl overflow-hidden cursor-hover h-64" onclick="openLightbox('https://images.unsplash.com/photo-1536440136628-849c177e76a1?q=80&w=800&auto=format&fit=crop')">
+                <img src="https://images.unsplash.com/photo-1536440136628-849c177e76a1?q=80&w=800&auto=format&fit=crop" alt="Film" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                <div class="absolute inset-0 bg-obsidian/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                    <span class="px-4 py-2 bg-crimson/90 rounded-full text-sm font-bold"><i class="fas fa-expand mr-2"></i>View</span>
+                </div>
+            </div>
+            <div class="group relative rounded-2xl overflow-hidden cursor-hover h-64" onclick="openLightbox('https://www.w3schools.com/html/mov_bbb.mp4', 'video')">
+                <img src="https://images.unsplash.com/photo-1578022761797-b8636ac1773c?q=80&w=800&auto=format&fit=crop" alt="Video" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                <div class="absolute inset-0 bg-obsidian/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                    <span class="w-16 h-16 bg-cyber/90 rounded-full flex items-center justify-center text-2xl"><i class="fas fa-play"></i></span>
+                </div>
+            </div>
+            <div class="group relative rounded-2xl overflow-hidden cursor-hover h-64" onclick="openLightbox('https://images.unsplash.com/photo-1518609878373-06d740f60d8b?q=80&w=800&auto=format&fit=crop')">
+                <img src="https://images.unsplash.com/photo-1518609878373-06d740f60d8b?q=80&w=800&auto=format&fit=crop" alt="3D" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                <div class="absolute inset-0 bg-obsidian/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                    <span class="px-4 py-2 bg-crimson/90 rounded-full text-sm font-bold"><i class="fas fa-expand mr-2"></i>View</span>
+                </div>
+            </div>
+            <div class="group relative rounded-2xl overflow-hidden cursor-hover h-64" onclick="openLightbox('https://images.unsplash.com/photo-1605379399642-870262d3d051?q=80&w=800&auto=format&fit=crop')">
+                <img src="https://images.unsplash.com/photo-1605379399642-870262d3d051?q=80&w=800&auto=format&fit=crop" alt="Campaign" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                <div class="absolute inset-0 bg-obsidian/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                    <span class="px-4 py-2 bg-crimson/90 rounded-full text-sm font-bold"><i class="fas fa-expand mr-2"></i>View</span>
+                </div>
+            </div>
+            <div class="group relative rounded-2xl overflow-hidden cursor-hover h-64" onclick="openLightbox('https://images.unsplash.com/photo-1626785774573-4b799315345d?q=80&w=800&auto=format&fit=crop')">
+                <img src="https://images.unsplash.com/photo-1626785774573-4b799315345d?q=80&w=800&auto=format&fit=crop" alt="Animation" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                <div class="absolute inset-0 bg-obsidian/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                    <span class="px-4 py-2 bg-crimson/90 rounded-full text-sm font-bold"><i class="fas fa-expand mr-2"></i>View</span>
+                </div>
+            </div>
+            <div class="group relative rounded-2xl overflow-hidden cursor-hover h-64" onclick="openLightbox('https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=800&auto=format&fit=crop')">
+                <img src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=800&auto=format&fit=crop" alt="Web" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                <div class="absolute inset-0 bg-obsidian/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                    <span class="px-4 py-2 bg-crimson/90 rounded-full text-sm font-bold"><i class="fas fa-expand mr-2"></i>View</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Lightbox Modal -->
+    <div id="lightbox" class="fixed inset-0 z-[10002] bg-obsidian/95 backdrop-blur-xl hidden flex-col items-center justify-center p-4">
+        <button onclick="closeLightbox()" class="absolute top-6 right-6 text-4xl text-white hover:text-crimson cursor-hover transition-colors"><i class="fas fa-times"></i></button>
+        <div id="lightbox-content" class="max-w-5xl w-full max-h-[80vh] flex items-center justify-center">
+            <!-- Content injected via JS -->
+        </div>
+    </div>
+
+    <!-- Client Testimonials -->
+    <section class="py-24 relative z-10 max-w-7xl mx-auto px-6">
+        <h2 class="text-4xl md:text-5xl font-bold mb-12 text-center">Client <span class="text-cyber">Voices</span></h2>
+        <div class="grid md:grid-cols-3 gap-8">
+            <div class="glass p-8 rounded-3xl relative">
+                <i class="fas fa-quote-left text-4xl text-white/10 absolute top-6 right-6"></i>
+                <div class="flex text-crimson mb-4 text-sm">
+                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                </div>
+                <p class="text-gray-300 mb-6 italic">"C S Production House delivered a cinematic documentary that exceeded our government grant requirements. Flawless execution."</p>
+                <div class="flex items-center gap-4">
+                    <div class="w-10 h-10 rounded-full bg-cyber/30 flex items-center justify-center font-bold">RK</div>
+                    <div>
+                        <p class="font-bold text-sm">Rahul K.</p>
+                        <p class="text-xs text-gray-400">NGO Director</p>
+                    </div>
+                </div>
+            </div>
+            <div class="glass p-8 rounded-3xl relative">
+                <i class="fas fa-quote-left text-4xl text-white/10 absolute top-6 right-6"></i>
+                <div class="flex text-crimson mb-4 text-sm">
+                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                </div>
+                <p class="text-gray-300 mb-6 italic">"Their 3D mascot animation brought our brand to life. The AI integration for our promo videos was pure genius."</p>
+                <div class="flex items-center gap-4">
+                    <div class="w-10 h-10 rounded-full bg-crimson/30 flex items-center justify-center font-bold">SP</div>
+                    <div>
+                        <p class="font-bold text-sm">Sneha P.</p>
+                        <p class="text-xs text-gray-400">Startup Founder</p>
+                    </div>
+                </div>
+            </div>
+            <div class="glass p-8 rounded-3xl relative">
+                <i class="fas fa-quote-left text-4xl text-white/10 absolute top-6 right-6"></i>
+                <div class="flex text-crimson mb-4 text-sm">
+                    <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                </div>
+                <p class="text-gray-300 mb-6 italic">"Professional, fast, and incredibly creative. The website they built converts 3x better than our old one."</p>
+                <div class="flex items-center gap-4">
+                    <div class="w-10 h-10 rounded-full bg-white/30 flex items-center justify-center font-bold">AM</div>
+                    <div>
+                        <p class="font-bold text-sm">Amit M.</p>
+                        <p class="text-xs text-gray-400">E-commerce</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- AI Studio Pricing & Offers / Packages -->
+    <section id="pricing" class="py-24 relative z-10 max-w-7xl mx-auto px-6">
+        <div class="text-center mb-16">
+            <h2 class="text-4xl md:text-5xl font-bold mb-4">Transparent <span class="text-gradient">Pricing</span></h2>
+            <p class="text-gray-400">No hidden fees. Choose the package that fits your vision.</p>
+        </div>
+        
+        <div class="grid md:grid-cols-3 gap-8 items-center">
+            <!-- Starter -->
+            <div class="glass p-8 rounded-3xl border border-white/5 hover:border-white/20 transition-all cursor-hover hover:-translate-y-2">
+                <h3 class="text-xl font-bold mb-2">Starter AI</h3>
+                <p class="text-gray-400 text-sm mb-6">For small businesses & social media.</p>
+                <div class="text-4xl font-bold mb-6">₹15k <span class="text-sm text-gray-500 font-normal">/ project</span></div>
+                <ul class="space-y-3 mb-8 text-sm">
+                    <li class="flex items-center gap-3"><i class="fas fa-check text-cyber"></i> 1 Min AI Video</li>
+                    <li class="flex items-center gap-3"><i class="fas fa-check text-cyber"></i> Basic Editing</li>
+                    <li class="flex items-center gap-3"><i class="fas fa-check text-cyber"></i> 2 Revisions</li>
+                </ul>
+                <a href="#contact" class="block text-center py-3 rounded-full bg-white/5 hover:bg-white/10 transition-colors cursor-hover">Get Started</a>
+            </div>
+            
+            <!-- Pro -->
+            <div class="glass p-10 rounded-3xl border border-crimson/50 shadow-[0_0_30px_rgba(255,59,59,0.15)] relative transform md:-translate-y-4 cursor-hover hover:-translate-y-6 transition-all duration-300">
+                <div class="absolute top-0 right-8 transform -translate-y-1/2 px-4 py-1 bg-crimson text-xs font-bold rounded-full uppercase tracking-wider">Most Popular</div>
+                <h3 class="text-xl font-bold mb-2 text-crimson">Professional</h3>
+                <p class="text-gray-400 text-sm mb-6">For brands needing high-end visuals.</p>
+                <div class="text-4xl font-bold mb-6">₹45k <span class="text-sm text-gray-500 font-normal">/ project</span></div>
+                <ul class="space-y-3 mb-8 text-sm">
+                    <li class="flex items-center gap-3"><i class="fas fa-check text-crimson"></i> 3D Mascot Animation</li>
+                    <li class="flex items-center gap-3"><i class="fas fa-check text-crimson"></i> 5 Min Cinematic Film</li>
+                    <li class="flex items-center gap-3"><i class="fas fa-check text-crimson"></i> Unlimited Revisions</li>
+                    <li class="flex items-center gap-3"><i class="fas fa-check text-crimson"></i> Commercial License</li>
+                </ul>
+                <a href="#contact" class="block text-center py-3 rounded-full bg-crimson hover:bg-crimson/80 transition-colors cursor-hover shadow-[0_0_15px_rgba(255,59,59,0.4)]">Go Pro</a>
+            </div>
+            
+            <!-- Enterprise -->
+            <div class="glass p-8 rounded-3xl border border-white/5 hover:border-white/20 transition-all cursor-hover hover:-translate-y-2">
+                <h3 class="text-xl font-bold mb-2">Enterprise</h3>
+                <p class="text-gray-400 text-sm mb-6">For govt & large scale campaigns.</p>
+                <div class="text-4xl font-bold mb-6">Custom</div>
+                <ul class="space-y-3 mb-8 text-sm">
+                    <li class="flex items-center gap-3"><i class="fas fa-check text-cyber"></i> Full Documentary</li>
+                    <li class="flex items-center gap-3"><i class="fas fa-check text-cyber"></i> Web Dev + SEO</li>
+                    <li class="flex items-center gap-3"><i class="fas fa-check text-cyber"></i> Dedicated Team</li>
+                </ul>
+                <a href="#contact" class="block text-center py-3 rounded-full bg-white/5 hover:bg-white/10 transition-colors cursor-hover">Contact Us</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Interactive FAQ Accordion -->
+    <section id="faq" class="py-24 relative z-10 max-w-3xl mx-auto px-6">
+        <h2 class="text-4xl md:text-5xl font-bold mb-12 text-center">Frequently Asked <span class="text-cyber">Questions</span></h2>
+        <div class="space-y-4" id="faq-container">
+            <div class="glass rounded-2xl overflow-hidden border border-white/5 cursor-hover">
+                <button class="w-full px-6 py-5 text-left font-bold flex justify-between items-center focus:outline-none faq-btn">
+                    What software do you use for 3D animation?
+                    <i class="fas fa-plus text-crimson transition-transform duration-300"></i>
+                </button>
+                <div class="px-6 text-gray-400 hidden faq-content">
+                    We use industry-standard tools like Blender, Cinema 4D, and Unreal Engine for real-time rendering and hyper-realistic outputs.
+                </div>
+            </div>
+            <div class="glass rounded-2xl overflow-hidden border border-white/5 cursor-hover">
+                <button class="w-full px-6 py-5 text-left font-bold flex justify-between items-center focus:outline-none faq-btn">
+                    Are you officially registered for government projects?
+                    <i class="fas fa-plus text-crimson transition-transform duration-300"></i>
+                </button>
+                <div class="px-6 text-gray-400 hidden faq-content">
+                    Yes, C S Production House is MSME Registered, Udyam Certified, and holds active PAN & GST accounts, making us fully compliant for government tenders.
+                </div>
+            </div>
+            <div class="glass rounded-2xl overflow-hidden border border-white/5 cursor-hover">
+                <button class="w-full px-6 py-5 text-left font-bold flex justify-between items-center focus:outline-none faq-btn">
+                    How does the AI video generation work?
+                    <i class="fas fa-plus text-crimson transition-transform duration-300"></i>
+                </button>
+                <div class="px-6 text-gray-400 hidden faq-content">
+                    We combine traditional filmmaking with generative AI models to enhance footage, create synthetic backgrounds, and accelerate post-production workflows.
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Form -->
+    <section id="contact" class="py-24 relative z-10 max-w-5xl mx-auto px-6">
+        <div class="glass rounded-3xl p-8 md:p-12 border border-white/10 shadow-2xl relative overflow-hidden">
+            <div class="absolute top-0 right-0 w-64 h-64 bg-crimson/10 blur-[100px] rounded-full pointer-events-none"></div>
+            <div class="absolute bottom-0 left-0 w-64 h-64 bg-cyber/10 blur-[100px] rounded-full pointer-events-none"></div>
+            
+            <div class="grid md:grid-cols-2 gap-12 relative z-10">
+                <div>
+                    <h2 class="text-4xl font-bold mb-4">Let's Build <br><span class="text-gradient">Something Epic</span></h2>
+                    <p class="text-gray-400 mb-8">Fill out the form and our team will get back to you within 24 hours. For immediate assistance, use WhatsApp.</p>
+                    <div class="space-y-4">
+                        <div class="flex items-center gap-4">
+                            <i class="fas fa-map-marker-alt text-crimson"></i>
+                            <span>Varanasi, Uttar Pradesh, India</span>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <i class="fas fa-envelope text-cyber"></i>
+                            <span>hello@csproduction.in</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div>
+                    <form id="contact-form" class="space-y-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <input type="text" placeholder="Name" required class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-crimson focus:bg-white/10 transition-colors cursor-hover">
+                            <input type="email" placeholder="Email" required class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-crimson focus:bg-white/10 transition-colors cursor-hover">
+                        </div>
+                        <input type="text" placeholder="Project Type (e.g. 3D Animation)" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-crimson focus:bg-white/10 transition-colors cursor-hover">
+                        <textarea placeholder="Your Vision..." rows="4" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 focus:outline-none focus:border-crimson focus:bg-white/10 transition-colors cursor-hover resize-none"></textarea>
+                        <button type="submit" class="w-full py-4 bg-gradient-to-r from-crimson to-cyber rounded-xl font-bold hover:opacity-90 transition-opacity cursor-hover shadow-[0_0_20px_rgba(59,130,246,0.3)]">
+                            Send Message
+                        </button>
+                        <div id="form-success" class="hidden p-4 bg-green-500/20 border border-green-500/50 rounded-xl text-green-400 text-center font-bold">
+                            <i class="fas fa-check-circle mr-2"></i> Message Sent Successfully!
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-12 border-t border-white/5 text-center text-gray-500 relative z-10">
+        <p>&copy; 2023 C S Production House. All rights reserved.</p>
+        <p class="text-sm mt-2">Varanasi, India | Creative + AI Media Studio</p>
+    </footer>
+
+    <!-- WhatsApp Floating Button -->
+    <a href="https://wa.me/919999999999" target="_blank" class="fixed bottom-8 right-8 w-14 h-14 bg-[#25D366] rounded-full flex items-center justify-center text-3xl text-white shadow-[0_0_20px_rgba(37,211,102,0.5)] z-[100] hover-bounce cursor-hover">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+
+    <!-- Scripts -->
+    <script>
+        // Custom Cursor Logic
+        const cursor = document.querySelector('.custom-cursor');
+        const ring = document.querySelector('.cursor-ring');
+        let mouseX = window.innerWidth / 2;
+        let mouseY = window.innerHeight / 2;
+        let ringX = mouseX;
+        let ringY = mouseY;
+
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+            cursor.style.transform = `translate(calc(${mouseX}px - 50%), calc(${mouseY}px - 50%))`;
+        });
+
+        function animateCursor() {
+            ringX += (mouseX - ringX) * 0.15;
+            ringY += (mouseY - ringY) * 0.15;
+            ring.style.transform = `translate(calc(${ringX}px - 50%), calc(${ringY}px - 50%))`;
+            requestAnimationFrame(animateCursor);
+        }
+        animateCursor();
+
+        // Hover effect for cursor
+        document.querySelectorAll('a, button, .cursor-hover, input, textarea').forEach(el => {
+            el.addEventListener('mouseenter', () => document.body.classList.add('cursor-hover'));
+            el.addEventListener('mouseleave', () => document.body.classList.remove('cursor-hover'));
+        });
+
+        // Scroll Progress & Parallax
+        window.addEventListener('scroll', () => {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.getElementById("progress-bar").style.width = scrolled + "%";
+            
+            const parallax = document.getElementById("parallax-text");
+            if(parallax) {
+                parallax.style.transform = `translateY(${winScroll * 0.3}px)`;
+            }
+        });
+
+        // Mobile Menu Toggle
+        const menuBtn = document.getElementById('menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        let menuOpen = false;
+        
+        menuBtn.addEventListener('click', () => {
+            menuOpen = !menuOpen;
+            if(menuOpen) {
+                mobileMenu.classList.remove('hidden', 'translate-x-full');
+                menuBtn.innerHTML = '<i class="fas fa-times"></i>';
+            } else {
+                mobileMenu.classList.add('translate-x-full');
+                setTimeout(() => mobileMenu.classList.add('hidden'), 500);
+                menuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+            }
+        });
+        
+        document.querySelectorAll('.mobile-link').forEach(link => {
+            link.addEventListener('click', () => {
+                menuOpen = false;
+                mobileMenu.classList.add('translate-x-full');
+                setTimeout(() => mobileMenu.classList.add('hidden'), 500);
+                menuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+            });
+        });
+
+        // FAQ Accordion
+        document.querySelectorAll('.faq-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const content = btn.nextElementSibling;
+                const isOpen = content.classList.contains('open');
+                
+                document.querySelectorAll('.faq-content').forEach(c => {
+                    c.classList.remove('open');
+                    c.style.maxHeight = '0px';
+                    c.style.paddingBottom = '0px';
+                });
+                document.querySelectorAll('.faq-btn').forEach(b => b.classList.remove('active'));
+                
+                if(!isOpen) {
+                    btn.classList.add('active');
+                    content.classList.add('open');
+                    content.style.maxHeight = content.scrollHeight + "px";
+                    content.style.paddingBottom = "1.25rem";
+                }
+            });
+        });
+
+        // Lightbox Functions
+        function openLightbox(src, type = 'image') {
+            const lightbox = document.getElementById('lightbox');
+            const content = document.getElementById('lightbox-content');
+            content.innerHTML = '';
+            
+            if(type === 'video') {
+                const vid = document.createElement('video');
+                vid.src = src;
+                vid.controls = true;
+                vid.autoplay = true;
+                vid.className = 'max-w-full max-h-[80vh] rounded-xl shadow-2xl';
+                content.appendChild(vid);
+            } else {
+                const img = document.createElement('img');
+                img.src = src;
+                img.className = 'max-w-full max-h-[80vh] rounded-xl shadow-2xl object-contain';
+                content.appendChild(img);
+            }
+            
+            lightbox.classList.remove('hidden');
+            lightbox.classList.add('flex');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeLightbox() {
+            const lightbox = document.getElementById('lightbox');
+            lightbox.classList.add('hidden');
+            lightbox.classList.remove('flex');
+            document.getElementById('lightbox-content').innerHTML = '';
+            document.body.style.overflow = 'auto';
+        }
+
+        // Contact Form Submit Simulation
+        document.getElementById('contact-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const btn = e.target.querySelector('button[type="submit"]');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Sending...';
+            btn.disabled = true;
+            
+            setTimeout(() => {
+                document.getElementById('form-success').classList.remove('hidden');
+                e.target.reset();
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+                
+                setTimeout(() => {
+                    document.getElementById('form-success').classList.add('hidden');
+                }, 5000);
+            }, 1500);
+        });
+    </script>
+</body>
+</html>
